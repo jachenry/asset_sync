@@ -17,6 +17,7 @@ module AssetSync
 
     # Amazon AWS
     attr_accessor :aws_access_key_id, :aws_secret_access_key
+    attr_accessor :cache_control
 
     # Rackspace
     attr_accessor :rackspace_username, :rackspace_api_key, :rackspace_auth_url
@@ -37,6 +38,7 @@ module AssetSync
       self.gzip_compression = false
       self.manifest = false
       self.fail_silently = false
+      self.cache_control = 'public, max-age=4000'
       load_yml! if yml_exists?
     end
 
