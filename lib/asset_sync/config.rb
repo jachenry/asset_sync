@@ -43,7 +43,7 @@ module AssetSync
     end
 
     def manifest_path
-      default = File.join(Rails.root, 'public', 'assets', 'manifest.yml')
+      default = File.join(Rails.root, 'public', assets_prefix, 'manifest.yml')
       Rails.application.config.assets.manifest || default
     end
 
@@ -58,7 +58,7 @@ module AssetSync
     def aws?
       fog_provider == 'AWS'
     end
-    
+
     def fail_silently?
       fail_silently == true
     end
@@ -79,6 +79,11 @@ module AssetSync
       File.join(Rails.root, "config/asset_sync.yml")
     end
 
+    def assets_prefix
+      # Fix for Issue #38 when Rails.config.assets.prefix starts with a slash
+      Rails.application.config.assets.prefix.sub(/^\//, '')
+    end
+
     def load_yml!
       self.fog_provider          = yml["fog_provider"]
       self.fog_directory         = yml["fog_directory"]
@@ -92,7 +97,7 @@ module AssetSync
       self.gzip_compression       = yml["gzip_compression"] if yml.has_key?("gzip_compression")
       self.manifest               = yml["manifest"] if yml.has_key?("manifest")
       self.fail_silently          = yml["fail_silently"] if yml.has_key?("fail_silently")
-      
+
       # TODO deprecate the other old style config settings. FML.
       self.aws_access_key_id      = yml["aws_access_key"] if yml.has_key?("aws_access_key")
       self.aws_secret_access_key  = yml["aws_access_secret"] if yml.has_key?("aws_access_secret")
